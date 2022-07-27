@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
+import { CreateUserService } from '../services/CreateUserService';
 
 class CreateUserController {
   handle(request: Request, response: Response) {
+    const createUserService = new CreateUserService();
     const { name, email } = request.body;
-    if (!name)
-      return response
-        .status(400)
-        .json({ error: 'Bad request', msg: 'Name is required!' });
-    if (!email)
-      return response
-        .status(400)
-        .json({ error: 'Bad request', msg: 'Email is required!' });
-    
-    response.json({ name, email });
+
+    if (!name || !email)
+      return response.status(400).json({ msg: 'All fields are required!' });
+
+    const user = createUserService.execute({ name, email });
+    return response.status(201).json({ user });
   }
 }
 
